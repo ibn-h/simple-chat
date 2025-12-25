@@ -1,7 +1,15 @@
-import { WebSocket } from "websocket";
-import http from "http";
+import { WebSocketServer } from "ws";
 
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("WebSocket server is running\n");
+const server = new WebSocketServer({ port: 8080 });
+
+server.on("connection", (socket) => {
+  console.log("New client connected");
+
+  socket.on("message", (message) => {
+    console.log(`Received message: ${message}`);
+  });
+
+  socket.on("close", () => {
+    console.log("Client disconnected");
+  });
 });
