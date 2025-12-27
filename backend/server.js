@@ -1,15 +1,26 @@
-import { WebSocketServer } from "ws";
+import express from "express";
+import { WebSocket, WebSocketServer } from "ws";
+import http from "http";
 
-const server = new WebSocketServer({ port: 8080 });
+const app = express();
+const server = http.createServer(app);
+const wsServer = new WebSocketServer({ server });
 
-server.on("connection", (socket) => {
-  console.log("New client connected");
+wsServer.on("connection", (socket) => {
+  console.log("New WebSocket connection established");
+});
 
-  socket.on("message", (message) => {
-    console.log(`Received message: ${message}`);
+wsServer.on("message", (message) => {
+  console.log("Received message:", message);
+
+  // Broadcast message to all connected clients
+  wsServer.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(message);
+    }
   });
+});
 
-  socket.on("close", () => {
-    console.log("Client disconnected");
-  });
+server.listen(3000, () => {
+  console.log("Server is running on http://localhost:3000");
 });

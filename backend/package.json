@@ -12,6 +12,7 @@
   "type": "module",
   "description": "",
   "dependencies": {
+    "express": "^5.2.1",
     "websocket": "^1.0.35",
     "ws": "^8.18.3"
   }

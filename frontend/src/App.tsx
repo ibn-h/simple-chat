@@ -2,18 +2,30 @@ import { useEffect, useRef } from "react";
 
 function App() {
   const socketRef = useRef<WebSocket | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  // const [messages, setMessages] = useState([]);
+  // const [input, setInput] = useState("");
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8080");
+    const socket = new WebSocket("ws://localhost:3000");
     socketRef.current = socket;
-    socket.onmessage = (event) => {
-      console.log("Message from server, ", event.data);
+
+    socket.onopen = () => {
+      console.log("WebSocket connection established");
+    };
+
+    socket.onclose = () => {
+      console.log("WebSocket connection closed");
     };
   }, []);
 
-  const onSendMessage = () => {
-    if (socketRef.current) {
-      socketRef.current.send("Hello from client");
+  const sendMessage = () => {
+    if (socketRef.current && inputRef.current) {
+      const message = inputRef.current.value;
+      if (message.trim() !== "") {
+        socketRef.current.send(message);
+        inputRef.current.value = "";
+      }
     }
   };
 
@@ -29,13 +41,14 @@ function App() {
 
       <div className="w-full flex gap-2 h-fit">
         <input
+          ref={inputRef}
           type="text"
           placeholder="Type a message..."
           className="w-full text-black p-2 max-h-13 resize-none overflow-auto bg-f9 rounded-lg outline-0"
           maxLength={255}
           minLength={1}
         />
-        <button onClick={onSendMessage}>Send</button>
+        <button onClick={sendMessage}>Send</button>
       </div>
     </div>
   );
