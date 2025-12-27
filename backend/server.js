@@ -8,17 +8,10 @@ const wsServer = new WebSocketServer({ server });
 
 wsServer.on("connection", (socket) => {
   console.log("New WebSocket connection established");
-});
 
-wsServer.on("message", (message) => {
-  console.log("Received message:", message);
-
-  // Broadcast message to all connected clients
-  wsServer.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(message);
-    }
-  });
+  socket.onmessage = (message) => {
+    console.log("Received message:", message.data);
+  };
 });
 
 server.listen(3000, () => {
