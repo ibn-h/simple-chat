@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { BACKGROUND_COLOR_ME, BACKGROUND_COLOR_OTHER } from "./CONSTANTS.json";
 import MessageContainer from "./components/messageContainer";
 
 type Message = {
   text: string;
   time: string;
+  sender: string;
 };
 
 function App() {
@@ -22,15 +24,24 @@ function App() {
       console.log("WebSocket connection established");
     };
 
+    socket.onmessage = (message) => {
+      console.log("Received message from server: " + message.data);
+      console.log(message);
+    };
+
     socket.onclose = () => {
       console.log("WebSocket connection closed");
     };
   }, []);
 
-  const createMessage = (message: string) => {
+  const createMessage = (message: string, sender: string) => {
     const newMessage: Message = {
       text: message,
-      time: new Date().toLocaleTimeString(),
+      sender: sender,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     setMessages([...messages, newMessage]);
@@ -41,9 +52,10 @@ function App() {
       const message = messageInputRef.current.value;
 
       if (message.trim() !== "") {
-        createMessage(message);
-        socketRef.current.send(message);
+        createMessage(message, username);
         messageInputRef.current.value = "";
+
+        socketRef.current.send(message);
       }
     }
   };
@@ -53,6 +65,13 @@ function App() {
 
     if (nameInput && nameInput.value.length != 0) {
       setUsername(nameInput.value);
+
+      socketRef.current?.send(
+        JSON.stringify({
+          type: "setUsername",
+          username: nameInput.value,
+        })
+      );
     }
   };
 
@@ -82,7 +101,7 @@ function App() {
 
       <main
         id="chat-container"
-        className="h-full bg-f9 w-full rounded-lg p-2 gap-6 flex flex-col"
+        className="h-full bg-f9 w-full rounded-lg p-2 gap-6 flex flex-col overflow-auto"
       >
         {messages.map((message, index) => (
           <MessageContainer
@@ -90,6 +109,12 @@ function App() {
             text={message.text}
             time={message.time}
             name="JOE"
+            justifySelf={message.sender == username ? "end" : "start"}
+            bubbleColor={
+              message.sender == username
+                ? BACKGROUND_COLOR_ME
+                : BACKGROUND_COLOR_OTHER
+            }
           />
         ))}
       </main>

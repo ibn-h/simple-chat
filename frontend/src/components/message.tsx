@@ -1,4 +1,4 @@
-import Constants from "../CONSTANTS.json";
+import { BACKGROUND_COLOR_OTHER } from "../CONSTANTS.json";
 
 export type messageProps = {
   name: string;
@@ -11,16 +11,13 @@ export function Message({
   name,
   time,
   text,
-  bubbleColor = Constants.BACKGROUND_COLOR_OTHER,
+  bubbleColor = BACKGROUND_COLOR_OTHER,
 }: messageProps) {
   return (
-    <div className={`bg-${bubbleColor} w-fit p-4 rounded-lg`}>
-      <div className="w-full flex items-start justify-between mb-2">
-        <p className="text-lg font-semibold">{name}</p>
-        <p>{time}</p>
-      </div>
-
+    <div className={`${bubbleColor} w-fit p-4 rounded-lg gap-4`}>
+      <p className="text-lg font-semibold">{name}</p>
       <p>{text}</p>
+      <p className="w-full text-right text-sm">{time}</p>
     </div>
   );
 }
