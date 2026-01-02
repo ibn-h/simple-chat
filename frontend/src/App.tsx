@@ -16,6 +16,57 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [username, setUsername] = useState<string>("");
 
+  const getDateTimeString = () => {
+    const date = new Date();
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const sendMessage = () => {
+    if (socketRef.current && messageInputRef.current) {
+      const message = messageInputRef.current.value;
+
+      if (message.trim() !== "") {
+        const newMessage: Message = {
+          text: message,
+          sender: username,
+          time: getDateTimeString(),
+        };
+
+        setMessages((prev) => [...prev, newMessage]);
+        messageInputRef.current.value = "";
+
+        socketRef.current.send(
+          JSON.stringify({
+            type: "message",
+            text: message,
+          })
+        );
+      }
+    }
+  };
+
+  const joinChat = () => {
+    const nameInput = nameInputRef.current;
+
+    if (!socketRef.current) {
+      return;
+    }
+
+    if (nameInput && nameInput.value.length != 0) {
+      setUsername(nameInput.value);
+
+      socketRef.current.send(
+        JSON.stringify({
+          type: "setUsername",
+          username: nameInput.value,
+        })
+      );
+    }
+  };
+
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:3000");
     socketRef.current = socket;
@@ -25,55 +76,27 @@ function App() {
     };
 
     socket.onmessage = (message) => {
-      console.log("Received message from server: " + message.data);
-      console.log(message);
+      const data = JSON.parse(message.data);
+
+      if (data.type === "message") {
+        const newMessage: Message = {
+          text: data.text,
+          sender: data.sender,
+          time: getDateTimeString(),
+        };
+
+        setMessages((prev) => [...prev, newMessage]);
+      }
     };
 
     socket.onclose = () => {
       console.log("WebSocket connection closed");
     };
-  }, []);
 
-  const createMessage = (message: string, sender: string) => {
-    const newMessage: Message = {
-      text: message,
-      sender: sender,
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+    return () => {
+      socket.close();
     };
-
-    setMessages([...messages, newMessage]);
-  };
-
-  const sendMessage = () => {
-    if (socketRef.current && messageInputRef.current) {
-      const message = messageInputRef.current.value;
-
-      if (message.trim() !== "") {
-        createMessage(message, username);
-        messageInputRef.current.value = "";
-
-        socketRef.current.send(message);
-      }
-    }
-  };
-
-  const joinChat = () => {
-    const nameInput = nameInputRef.current;
-
-    if (nameInput && nameInput.value.length != 0) {
-      setUsername(nameInput.value);
-
-      socketRef.current?.send(
-        JSON.stringify({
-          type: "setUsername",
-          username: nameInput.value,
-        })
-      );
-    }
-  };
+  }, []);
 
   if (username == "") {
     return (
@@ -85,7 +108,8 @@ function App() {
             id="name-input"
             className="p-3 border-2 border-black rounded-lg outline-0"
             type="text"
-            placeholder={username}
+            placeholder={"ENTER NAME"}
+            defaultValue={"JOE"}
           />
           <button className="" onClick={joinChat}>
             Join Chat
@@ -108,7 +132,7 @@ function App() {
             key={index}
             text={message.text}
             time={message.time}
-            name="JOE"
+            name={message.sender}
             justifySelf={message.sender == username ? "end" : "start"}
             bubbleColor={
               message.sender == username
@@ -127,6 +151,7 @@ function App() {
           className="w-full text-black p-2 max-h-13 resize-none overflow-auto bg-f9 rounded-lg outline-0"
           maxLength={255}
           minLength={1}
+          defaultValue={"Hello World!"}
         />
         <button onClick={sendMessage}>Send</button>
       </div>
