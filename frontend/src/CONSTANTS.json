@@ -1,4 +1,6 @@
 {
   "BACKGROUND_COLOR_ME": "bg-blue-300",
-  "BACKGROUND_COLOR_OTHER": "bg-gray-300"
+  "BACKGROUND_COLOR_OTHER": "bg-gray-300",
+
+  "SERVER_ADDRESS": "192.168.56.1:3000"
 }

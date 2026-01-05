@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { BACKGROUND_COLOR_ME, BACKGROUND_COLOR_OTHER } from "./CONSTANTS.json";
+import { BACKGROUND_COLOR_ME, BACKGROUND_COLOR_OTHER, SERVER_ADDRESS } from "./CONSTANTS.json";
 import MessageContainer from "./components/messageContainer";
 
 type Message = {
@@ -70,7 +70,7 @@ function App() {
   };
 
   useEffect(() => {
-    const socket = new WebSocket("ws://192.168.0.251:3000");
+    const socket = new WebSocket(`ws://${SERVER_ADDRESS}`);
     socketRef.current = socket;
 
     socket.onopen = () => {
@@ -103,12 +103,12 @@ function App() {
   if (username == "") {
     return (
       <div className="flex flex-col gap-4 items-center justify-center">
-        <h1>Enter your username</h1>
-        <div className="flex w-full h-fit items-center justify-center gap-3">
+        <h1 className="text-center">Enter your username</h1>
+        <div className="flex w-full flex-col h-fit items-center justify-center gap-3">
           <input
             ref={nameInputRef}
             id="name-input"
-            className="p-3 border-2 border-black rounded-lg outline-0"
+            className="p-2 border-2 border-black rounded-lg outline-0"
             type="text"
             placeholder={"ENTER NAME"}
             defaultValue={"JOE"}
@@ -122,10 +122,10 @@ function App() {
   }
 
   return (
-    <div className="bg-gray-300 w-230 h-180 p-6 flex flex-col justify-start gap-4 items-start">
+    <div className="bg-gray-300 lg:w-230 h-180 p-6 flex flex-col justify-start gap-4 items-start w-full">
       <h1>Simple Chat</h1>
 
-      <main
+      <div
         id="chat-container"
         className="h-full bg-f9 w-full rounded-lg p-2 gap-6 flex flex-col overflow-auto"
       >
@@ -143,7 +143,7 @@ function App() {
             }
           />
         ))}
-      </main>
+      </div>
 
       <div className="w-full flex gap-2 h-fit">
         <input
