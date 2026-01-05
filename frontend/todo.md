@@ -1,7 +1,18 @@
-## Todo
+# Todo
+
+### Primary (Max 3)
+
+[]Make responsive so you can test on mobile
+[]Add username label to UI
+
+### Secondary
 
 []Add functionality to submit with enter key on all inputs
-[]Make chatbox automatically scroll down when it gets larger   
-[]Add backend functionality so that messages are shown across all users
+[]Make chatbox automatically scroll down when it gets larger  
 []Make responsive
 []Add visual representation of connecting to web socket (loading spinner or similar)
+[]Make it impossible to join chat when there is a connection problem
+
+## Done
+
+[x]Add backend functionality so that messages are shown across all users

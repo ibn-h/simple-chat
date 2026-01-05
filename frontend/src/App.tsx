@@ -25,26 +25,28 @@ function App() {
   };
 
   const sendMessage = () => {
-    if (socketRef.current && messageInputRef.current) {
-      const message = messageInputRef.current.value;
+    if (!socketRef.current || !messageInputRef.current) {
+      return;
+    }
 
-      if (message.trim() !== "") {
-        const newMessage: Message = {
+    const message = messageInputRef.current.value;
+
+    if (message.trim() !== "") {
+      const newMessage: Message = {
+        text: message,
+        sender: username,
+        time: getDateTimeString(),
+      };
+
+      setMessages((prev) => [...prev, newMessage]);
+      messageInputRef.current.value = "";
+
+      socketRef.current.send(
+        JSON.stringify({
+          type: "message",
           text: message,
-          sender: username,
-          time: getDateTimeString(),
-        };
-
-        setMessages((prev) => [...prev, newMessage]);
-        messageInputRef.current.value = "";
-
-        socketRef.current.send(
-          JSON.stringify({
-            type: "message",
-            text: message,
-          })
-        );
-      }
+        })
+      );
     }
   };
 
@@ -68,7 +70,7 @@ function App() {
   };
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:3000");
+    const socket = new WebSocket("ws://192.168.0.251:3000");
     socketRef.current = socket;
 
     socket.onopen = () => {
@@ -81,7 +83,7 @@ function App() {
       if (data.type === "message") {
         const newMessage: Message = {
           text: data.text,
-          sender: data.sender,
+          sender: data.username,
           time: getDateTimeString(),
         };
 

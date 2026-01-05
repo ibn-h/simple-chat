@@ -6,6 +6,10 @@ const app = express();
 const server = http.createServer(app);
 const wsServer = new WebSocketServer({ server });
 
+app.get("/", (req, res) => {
+  res.send("Server is running on port 3000");
+});
+
 function broadCast(data, sender) {
   wsServer.clients.forEach((client) => {
     if (!client.readyState) {
@@ -13,7 +17,6 @@ function broadCast(data, sender) {
     }
 
     if (client == sender) {
-      console.log("Skipping sender");
       return;
     }
 
@@ -56,6 +59,11 @@ wsServer.on("connection", (socket, req) => {
             },
             socket
           );
+
+          break;
+        case "Buffer":
+          console.log("TYPE => Buffer");
+
           break;
         default:
           console.log("Unknown message type: ", data.type);
@@ -66,10 +74,10 @@ wsServer.on("connection", (socket, req) => {
   });
 
   socket.onclose = () => {
-    console.log("Disconnected");
+    console.log(socket.username + " disconnected");
   };
 });
 
-server.listen(3000, () => {
-  console.log("Server is running on http://localhost:3000");
+server.listen(3000, "0.0.0.0", () => {
+  console.log("Server is running on interfaces:3000");
 });
