@@ -61,10 +61,6 @@ wsServer.on("connection", (socket, req) => {
           );
 
           break;
-        case "Buffer":
-          console.log("TYPE => Buffer");
-
-          break;
         default:
           console.log("Unknown message type: ", data.type);
       }
