@@ -1,11 +1,11 @@
 import type { messageProps } from "./message";
-import type { PersoonProps } from "./persoon";
+import type { AvatarProps } from "./avatar";
 
 import { Message } from "./message";
-import Persoon from "./persoon";
+import Avatar from "./avatar";
 
 type MessageContainerProps = messageProps &
-  PersoonProps & {
+  AvatarProps & {
     justifySelf?: "start" | "end";
   };
 
@@ -18,7 +18,7 @@ function MessageContainer(props: MessageContainerProps) {
           : "self-start flex-row"
       }`}
     >
-      <Persoon {...props} />
+      <Avatar {...props} />
       <Message {...props} />
     </div>
   );

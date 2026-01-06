@@ -2,21 +2,17 @@
 
 ### Bugs
 
-[]Client not connecting to websocket on laptop
-
 ### Primary (Max 3)
 
-[]Add username label to UI
+[x]Add functionality to submit with enter key on all inputs
+[x]Make chatbox automatically scroll down when it gets larger
+[x]Make fully responsive
 
 ### Secondary
 
-[]Add functionality to submit with enter key on all inputs
-[]Make chatbox automatically scroll down when it gets larger  
-[]Make responsive
 []Add visual representation of connecting to web socket (loading spinner or similar)
 []Make it impossible to join chat when there is a connection problem
 
-### Done
+## Ideas
 
-[x]Add backend functionality so that messages are shown across all users
-[x]Make responsive so you can test on mobile
+[]Refactor APP.tsx and add more components

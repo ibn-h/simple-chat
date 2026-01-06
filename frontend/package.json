@@ -13,6 +13,7 @@
     "@tailwindcss/vite": "^4.1.18",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "string-to-hex-code-color": "^1.0.8",
     "tailwindcss": "^4.1.18",
     "websocket": "^1.0.35",
     "ws": "^8.18.3"

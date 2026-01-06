@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { BACKGROUND_COLOR_ME, BACKGROUND_COLOR_OTHER, SERVER_ADDRESS } from "./CONSTANTS.json";
+import { String2HexCodeColor } from "string-to-hex-code-color";
+import {
+  BACKGROUND_COLOR_ME,
+  BACKGROUND_COLOR_OTHER,
+  SERVER_ADDRESS,
+} from "./CONSTANTS.json";
 import MessageContainer from "./components/messageContainer";
 
 type Message = {
@@ -12,9 +17,22 @@ function App() {
   const socketRef = useRef<WebSocket | null>(null);
   const messageInputRef = useRef<HTMLInputElement | null>(null);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const messagesContainerRef = useRef<HTMLInputElement | null>(null);
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [username, setUsername] = useState<string>("");
+
+  const string2HexCodeColor = new String2HexCodeColor();
+
+  const handleEnter = (
+    event: React.KeyboardEvent,
+    actionOnEnter: () => void
+  ) => {
+    if (event.key == "Enter") {
+      console.log("Enter has been pressed");
+      actionOnEnter();
+    }
+  };
 
   const getDateTimeString = () => {
     const date = new Date();
@@ -100,6 +118,15 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!messagesContainerRef.current) {
+      return;
+    }
+
+    messagesContainerRef.current.scrollTop =
+      messagesContainerRef.current?.scrollHeight;
+  }, [messages]);
+
   if (username == "") {
     return (
       <div className="flex flex-col gap-4 items-center justify-center">
@@ -112,6 +139,10 @@ function App() {
             type="text"
             placeholder={"ENTER NAME"}
             defaultValue={"JOE"}
+            onKeyDown={(e) => {
+              handleEnter(e, joinChat);
+            }}
+            autoFocus
           />
           <button className="" onClick={joinChat}>
             Join Chat
@@ -122,15 +153,17 @@ function App() {
   }
 
   return (
-    <div className="bg-gray-300 lg:w-230 h-180 p-6 flex flex-col justify-start gap-4 items-start w-full">
+    <div className="bg-gray-300 lg:w-230 h-full lg:h-180 p-6 flex flex-col justify-start gap-4 items-start w-full">
       <h1>Simple Chat</h1>
 
       <div
         id="chat-container"
+        ref={messagesContainerRef}
         className="h-full bg-f9 w-full rounded-lg p-2 gap-6 flex flex-col overflow-auto"
       >
         {messages.map((message, index) => (
           <MessageContainer
+            ovaleColor={string2HexCodeColor.stringToColor(message.sender)}
             key={index}
             text={message.text}
             time={message.time}
@@ -154,6 +187,9 @@ function App() {
           maxLength={255}
           minLength={1}
           defaultValue={"Hello World!"}
+          onKeyDown={(e) => {
+            handleEnter(e, sendMessage);
+          }}
         />
         <button onClick={sendMessage}>Send</button>
       </div>
